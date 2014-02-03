@@ -1,0 +1,37 @@
+﻿/* @font-face kit by Fonts2u (http://www.fonts2u.com) */
+@font-face {
+    font-family: "Candice";
+    src: url("../font/CANDY.eot?") format("eot"),url("../font/CANDY.woff") format("woff"),url("../font/CANDY.ttf") format("truetype"),url("../font/CANDY.svg#Candice") format("svg");
+    font-weight: normal;
+    font-style: normal;}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin: 0 auto;
+    width:500px;
+    height:500px;
+}
+#header {
+    height:100px;
+    font-family:"Candice";
+    font-size: 55px;
+    text-align:center;
+    color:yellowgreen;
+    text-shadow: 2px 2px 2px goldenrod;
+}
+#header p {
+    font-size: 20px;
+    color:royalblue;
+    text-shadow: 1px 1px 1px red;
+    margin: 0px;
+}
+
+#game {
+    wdith: 500px;
+    height: 400px;
+    box-shadow: 2px 2px 2px black;
+}
