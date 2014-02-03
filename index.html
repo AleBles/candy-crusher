@@ -7,6 +7,7 @@
 
     <script type="text/javascript" src="js/lib/pixi.js"></script>
     <script type="text/javascript" src="js/lib/TweenLite.js"></script>
+    <script type="text/javascript" src="js/lib/TimelineLite.js"></script>
     <script type="text/javascript" src="js/candy_crusher.js"></script>
 </head>
 <body>
@@ -15,7 +16,11 @@
             Candy Crusher
             <p>Crush all the candies!!!</p>
         </div>
-        <canvas id="game" width="500px" height="400px"></canvas>
+        <div id="game" width="500px" height="400px">
+            <button id="start" onclick="javascript:CandyCrusher.start();">
+                Start Crushing
+            </button>
+        </div>
     </div>
 </body>
 </html>

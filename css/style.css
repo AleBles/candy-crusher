@@ -33,5 +33,16 @@ body {
 #game {
     wdith: 500px;
     height: 400px;
-    box-shadow: 2px 2px 2px black;
+    text-align:center;
+}
+
+#start {
+    margin-top:100px;
+    font-family:"Candice";
+    font-size: 28px;
+    background-color: #e47100;
+    border-radius: 10px;
+    color:royalblue;
+    text-shadow: 2px 2px 2px goldenrod;
+    border: 1px solid goldenrod;
 }
