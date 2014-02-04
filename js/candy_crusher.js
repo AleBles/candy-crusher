@@ -14,16 +14,20 @@ var CandyCrusher = (function () {
         LAYER_CANDY = new PIXI.DisplayObjectContainer(),
         LAYER_FG = new PIXI.DisplayObjectContainer(),
         tk = (new Date()).getTime(),
+        time = 45,
+        t_time = (new Date()).getTime(),
         score = 0,
         prevCandy = null,
         scoreText = null,
+        timeText = null,
         explosionTextures = [];
 
     function GridElement(x, y) {
         var texture_top = PIXI.Texture.fromFrame('hole_top.png'),
             texture_bottom = PIXI.Texture.fromFrame('hole_bottom.png'),
             hole_top = new PIXI.Sprite(texture_top),
-            hole_bottom = new PIXI.Sprite(texture_bottom);
+            hole_bottom = new PIXI.Sprite(texture_bottom),
+            hasCandy = false;
 
         hole_top.position.x = x * GRID_ELE_WIDTH;
         hole_top.position.y = FIELD_OFFSET + y * GRID_ELE_HEIGHT;
@@ -42,20 +46,24 @@ var CandyCrusher = (function () {
         candy.position.x = hole_top.position.x + 30;
         candy.position.y = hole_top.position.y + 100;
         candy.visible = false;
-        candy.setInteractive(true);
-        candy.click = function (evt) {
+        hole_top.setInteractive(true);
+        hole_bottom.setInteractive(true);
+        hole_top.click = hole_bottom.click = function (evt) {
             score += 1;
             destroyCandy(evt.global.x, evt.global.y);
         };
         LAYER_CANDY.addChild(candy);
 
         function destroyCandy(x, y) {
+            if (!hasCandy) {
+                return;
+            }
             candy.visible = false;
             candy.height = 0;
             var explosion = new PIXI.MovieClip(explosionTextures);
             explosion.rotation = Math.random() * Math.PI;
             explosion.anchor = new PIXI.Point(0.5, 0.5);
-            explosion.scale.x = explosion.scale.y = 0.5;
+            explosion.scale.x = explosion.scale.y = 0.75;
             explosion.position.x = x;
             explosion.position.y = y;
             explosion.loop = false;
@@ -71,21 +79,25 @@ var CandyCrusher = (function () {
                 var texture = PIXI.Texture.fromFrame('candy' + Math.floor((Math.random()*CANDY_AMOUNT)+1)+ '.png');
                 candy.setTexture(texture);
                 candy.visible = true;
-                var timeLine = new TimelineLite(),
+                var pos = candy.position.y - original_height,
+                    timeLine = new TimelineLite(),
                     tweens = [
-                        new TweenLite(candy.position, 0.5, {y: candy.position.y - original_height}),
-                        new TweenLite(candy, 0.5, {height: original_height})
+                        new TweenLite(candy.position, 0.1, {y: pos}),
+                        new TweenLite(candy, 0.1, {height: original_height})
                     ];
                 timeLine.insertMultiple(tweens, 0, 'start');
                 timeLine.play();
+                hasCandy = true;
             },
             hideCandy: function () {
                 var timeLine = new TimelineLite({onComplete: function () {
                         candy.visible = false;
+                        hasCandy = false;
                     }}),
+                    pos = candy.position.y + original_height,
                     tweens = [
-                        new TweenLite(candy.position, 0.5, {y: candy.position.y + original_height}),
-                        new TweenLite(candy, 0.5, {height: 0})
+                        new TweenLite(candy.position, 0.1, {y: pos}),
+                        new TweenLite(candy, 0.1, {height: 0})
                     ];
                 timeLine.insertMultiple(tweens, 0, 'start');
                 timeLine.play();
@@ -126,8 +138,12 @@ var CandyCrusher = (function () {
             loader.onComplete = loaded;
             loader.load();
 
-            scoreText = new PIXI.Text("Score: " + score, {font:"90px Candice", fill:"white"});
+            scoreText = new PIXI.Text("Score: " + score, {font:"70px Candice", fill:"white"});
+            timeText = new PIXI.Text("Time left: " + time, {font:"25px Candice", fill:"white"});
+            timeText.position.x = 350;
+            scoreText.position.y = 5;
             stage.addChild(scoreText);
+            stage.addChild(timeText);
             stage.addChild(LAYER_BG);
             stage.addChild(LAYER_CANDY);
             stage.addChild(LAYER_FG);
@@ -135,19 +151,32 @@ var CandyCrusher = (function () {
             requestAnimFrame(this.animate.bind(this));
         },
         animate: function () {
-            requestAnimFrame(this.animate.bind(this));
+            if (time <= 0) {
+                timeText.setText("");
+                scoreText.setText("Gamover: " + score);
+            } else {
+                var delta = (new Date()).getTime() - tk,
+                    t_delta = (new Date()).getTime() - t_time;
 
-            var delta = (new Date()).getTime() - tk;
+                if (t_delta > 1000) {
+                    t_time = (new Date()).getTime();
+                    time -= 1;
+                }
 
-            if (delta > 2000) {
-                tk = (new Date()).getTime();
-                prevCandy.hideCandy();
-                prevCandy = GRID[Math.floor((Math.random()*3))][Math.floor((Math.random()*3))];
-                prevCandy.showCandy();
+                var timeBetween = 1500 - (Math.floor(score / 2) * 100);
+
+                if (delta > timeBetween && null !== prevCandy) {
+                    tk = (new Date()).getTime();
+                    prevCandy.hideCandy();
+                    prevCandy = GRID[Math.floor((Math.random()*3))][Math.floor((Math.random()*3))];
+                    prevCandy.showCandy();
+                }
+
+                scoreText.setText("Score: " + score);
+                timeText.setText("Time left: " + time);
             }
 
-            scoreText.setText("Score: " + score);
-
+            requestAnimFrame(this.animate.bind(this));
             renderer.render(stage);
         }
     };
