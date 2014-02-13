@@ -6,10 +6,45 @@
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
 
     <script type="text/javascript" src="js/lib/pixi.js"></script>
-    <script type="text/javascript" src="js/lib/TweenLite.js"></script>
-    <script type="text/javascript" src="js/lib/TimelineLite.js"></script>
-    <script type="text/javascript" src="js/game.js"></script>
 </head>
 <body>
+    <script>
+        var w = 320,
+            h = 480,
+            renderer = PIXI.autoDetectRenderer(w, h),
+            bg = new PIXI.Stage(0x000000),
+            r = function (m) {
+                return Math.random() * m + 1;
+            };
+
+        document.body.appendChild(renderer.view);
+
+        var star = new PIXI.Graphics();
+        star.beginFill(0xFFFFFF);
+        bg.addChild(star);
+
+        for(var i = 0; i < 300; i++) {
+            var s;
+            if (i < 200) {
+                s = 1;
+            } else if (i < 275) {
+                s = 2;
+            } else {
+                s = 3;
+            }
+            star.drawCircle(r(w), r(h), s);
+        }
+
+        requestAnimFrame( animate );
+
+        function animate() {
+            requestAnimFrame( animate );
+
+            // render the stage
+            renderer.render(bg);
+        }
+
+    </script>
+<div id="container"></div>
 </body>
 </html>
