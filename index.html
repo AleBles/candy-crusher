@@ -12,12 +12,16 @@
         var w = 320,
             h = 480,
             renderer = PIXI.autoDetectRenderer(w, h),
-            bg = new PIXI.Stage(0x000000),
+            stage = new PIXI.Stage(0x000000),
+            bg = new PIXI.DisplayObjectContainer(),
+            fg = new PIXI.DisplayObjectContainer(),
             r = function (m) {
                 return Math.random() * m + 1;
             };
 
         document.body.appendChild(renderer.view);
+        stage.addChild(bg);
+        stage.addChild(fg);
 
         var star = new PIXI.Graphics();
         star.beginFill(0xFFFFFF);
@@ -32,8 +36,17 @@
             } else {
                 s = 3;
             }
+            star.fillAlpha = Number(Math.random().toFixed(1));
             star.drawCircle(r(w), r(h), s);
         }
+
+        var planet = new PIXI.Graphics();
+        planet.beginFill(0x0EBFE9);
+        fg.addChild(planet);
+        planet.drawCircle(310, 10, 50);
+
+        planet.beginFill(0x949494);
+        planet.drawCircle(160, 600, 400);
 
         requestAnimFrame( animate );
 
@@ -41,7 +54,7 @@
             requestAnimFrame( animate );
 
             // render the stage
-            renderer.render(bg);
+            renderer.render(stage);
         }
 
     </script>
