@@ -6,8 +6,15 @@
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
 
     <script type="text/javascript" src="js/lib/pixi.js"></script>
+    <script type="text/javascript" src="js/lib/rgbcolor.js"></script>
+    <script type="text/javascript" src="js/lib/StackBlur.js"></script>
+    <script type="text/javascript" src="js/lib/canvg.js"></script>
 </head>
 <body>
+    <div id="container"></div>
+    <div id="canvasCache" style="display:none;">
+        <canvas id="earth" width="480px" height="431px"></canvas>
+    </div>
     <script>
         var w = 320,
             h = 480,
@@ -19,7 +26,11 @@
                 return Math.random() * m + 1;
             };
 
-        document.body.appendChild(renderer.view);
+        var eartC = document.getElementById('earth');
+        var earth = eartC.getContext('2d');
+        earth.drawSvg("img/earth.svg", 0, 0, 480, 431);
+
+        document.getElementById("container").appendChild(renderer.view);
         stage.addChild(bg);
         stage.addChild(fg);
 
@@ -40,13 +51,13 @@
             star.drawCircle(r(w), r(h), s);
         }
 
-        var planet = new PIXI.Graphics();
-        planet.beginFill(0x0EBFE9);
+        var texture = PIXI.Texture.fromCanvas(eartC);
+        var planet = new PIXI.Sprite(texture);
+        planet.position.x = 230;
+        planet.position.y = -20;
+        planet.scale = new PIXI.Point(0.2, 0.2);
         fg.addChild(planet);
-        planet.drawCircle(310, 10, 50);
 
-        planet.beginFill(0x949494);
-        planet.drawCircle(160, 600, 400);
 
         requestAnimFrame( animate );
 
@@ -58,6 +69,5 @@
         }
 
     </script>
-<div id="container"></div>
 </body>
 </html>
